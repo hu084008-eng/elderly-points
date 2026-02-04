@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: elderly-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://elderly-backend.onrender.com
+
+  - type: web
+    name: elderly-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: elderly-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: elderly-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: elderly-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: elderly-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: elderly-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: elderly-db
+    databaseName: elderly_care
+    user: root
+    plan: free

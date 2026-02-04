@@ -1,0 +1,31 @@
+name: elderly-care
+
+services:
+  backend:
+    build: ./backend
+    container_name: elderly-backend
+    environment:
+      DB_HOST: host.docker.internal
+      DB_USER: root
+      DB_PASSWORD: root123456
+      DB_NAME: elderly_care
+      JWT_SECRET: elderly-care-secret-key-2024
+      NODE_ENV: production
+      PORT: 3000
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build: ./frontend
+    container_name: elderly-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  uploads:

@@ -11,7 +11,7 @@
           <text class="username">{{item.username}}</text>
           <text class="name">{{item.name}}</text>
         </view>
-        <view class="institution-tag">{{item.institution?.name || '未分配'}}</view>
+        <view class="institution-tag">{{item.institution ? item.institution.name : '未分配'}}</view>
       </view>
       
       <view class="user-footer">

@@ -25,5 +25,6 @@
       "desc": "用于拍摄服务照片"
     }
   },
+  "requiredBackgroundModes": [],
   "sitemapLocation": "sitemap.json"
 }

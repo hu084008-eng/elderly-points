@@ -50,9 +50,9 @@ Page({
       // 根据角色跳转
       setTimeout(() => {
         if (res.data.user.role === 'super_admin') {
-          wx.switchTab({ url: '/pages/admin/dashboard/dashboard' });
+          wx.redirectTo({ url: '/pages/admin/dashboard/dashboard' });
         } else {
-          wx.switchTab({ url: '/pages/director/dashboard/dashboard' });
+          wx.redirectTo({ url: '/pages/director/dashboard/dashboard' });
         }
       }, 1000);
 

@@ -8,6 +8,7 @@ const Product = require('./Product');
 const PointsTransaction = require('./PointsTransaction');
 const Exchange = require('./Exchange');
 const SystemLog = require('./SystemLog');
+const ServiceRule = require('./ServiceRule');
 
 // 定义关联关系
 Institution.hasMany(Helper, { foreignKey: 'institution_id' });
@@ -39,5 +40,6 @@ module.exports = {
   Product,
   PointsTransaction,
   Exchange,
-  SystemLog
+  SystemLog,
+  ServiceRule
 };

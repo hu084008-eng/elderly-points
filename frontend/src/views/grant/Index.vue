@@ -12,7 +12,7 @@
         label-width="120px"
         style="max-width: 600px"
       >
-        <!-- 所属院（院长只能看到本院） -->
+        <!-- 所属院 -->
         <el-form-item label="所属院" prop="institution_id">
           <el-select
             v-model="form.institution_id"
@@ -62,80 +62,44 @@
         </el-form-item>
 
         <!-- 服务类型 -->
-        <el-form-item label="服务类型" prop="service_category">
+        <el-form-item label="服务类型" prop="service_rule_id">
           <el-select
-            v-model="form.service_category"
+            v-model="form.service_rule_id"
             placeholder="请选择服务类型"
             style="width: 100%"
             @change="handleServiceChange"
           >
-            <el-option-group label="固定分值服务">
-              <el-option label="到院互助" value="到院互助" />
-              <el-option label="上门互助" value="上门互助" />
-              <el-option label="院内互助" value="院内互助" />
-              <el-option label="生产劳动" value="生产劳动" />
-            </el-option-group>
-            <el-option-group label="活动积分（动态计算）">
-              <el-option label="文娱活动 - 每人2分，团队最高20分" value="文娱活动" />
-            </el-option-group>
+            <el-option
+              v-for="item in serviceRuleList"
+              :key="item.id"
+              :label="`${item.name}（${item.points_per_hour}分/小时）`"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
 
-        <!-- 固定分值：服务时长 -->
-        <template v-if="isFixedService">
-          <el-form-item label="服务时长" prop="service_duration">
-            <el-radio-group v-model="form.service_duration">
-              <el-radio label="<2小时">&lt;2小时（1分）</el-radio>
-              <el-radio label="≥2小时">≥2小时（2分）</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item v-if="form.service_duration">
-            <el-alert
-              :title="`本次发放：${calculatedPoints}分`"
-              type="success"
-              :closable="false"
-              show-icon
-            />
-          </el-form-item>
-        </template>
+        <!-- 服务时长 -->
+        <el-form-item label="服务时长" prop="duration_hours">
+          <el-input-number
+            v-model="form.duration_hours"
+            :min="0.5"
+            :step="0.5"
+            :precision="1"
+            style="width: 100%"
+            @change="calculatePoints"
+          />
+          <span class="form-tip">单位：小时，支持0.5小数（如1.5）</span>
+        </el-form-item>
 
-        <!-- 文娱活动：活动类型和时长 -->
-        <template v-if="isActivityService">
-          <el-form-item label="活动类型" prop="activity_id">
-            <el-select
-              v-model="form.activity_id"
-              placeholder="请选择活动类型"
-              style="width: 100%"
-              @change="handleActivityChange"
-            >
-              <el-option
-                v-for="item in activityList"
-                :key="item.id"
-                :label="`${item.name}（${item.points_per_hour}分/小时）`"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="参与时长" prop="duration_hours">
-            <el-input-number
-              v-model="form.duration_hours"
-              :min="0.5"
-              :step="0.5"
-              :precision="1"
-              style="width: 100%"
-              @change="calculateActivityPoints"
-            />
-            <span class="form-tip">单位：小时，支持0.5小数（如1.5）</span>
-          </el-form-item>
-          <el-form-item v-if="selectedActivity && form.duration_hours">
-            <el-alert
-              :title="activityPointsText"
-              type="success"
-              :closable="false"
-              show-icon
-            />
-          </el-form-item>
-        </template>
+        <!-- 积分预览 -->
+        <el-form-item v-if="selectedRule && form.duration_hours">
+          <el-alert
+            :title="pointsText"
+            type="success"
+            :closable="false"
+            show-icon
+          />
+        </el-form-item>
 
         <!-- 服务照片 -->
         <el-form-item label="服务照片" prop="image_url">
@@ -177,31 +141,28 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import { getInstitutionList } from '@/api/institution'
-import { getActivityList } from '@/api/activities'
+import { getServiceRuleList } from '@/api/service-rules'
 import { getPersons, grantPoints } from '@/api/grant'
 
 const userStore = useUserStore()
 const formRef = ref(null)
-const loading = ref(false)
 const submitLoading = ref(false)
 const personLoading = ref(false)
 
 const institutionList = ref([])
 const personList = ref([])
-const activityList = ref([])
-const selectedActivity = ref(null)
+const serviceRuleList = ref([])
+const selectedRule = ref(null)
 
 const form = reactive({
   institution_id: userStore.isDirector ? userStore.userInstitution?.id : '',
   target_type: '',
   target_id: '',
-  service_category: '',
-  service_duration: '',
-  activity_id: null,
+  service_rule_id: null,
   duration_hours: null,
   description: '',
   image_url: ''
@@ -211,10 +172,8 @@ const rules = {
   institution_id: [{ required: true, message: '请选择所属院', trigger: 'change' }],
   target_type: [{ required: true, message: '请选择人员类型', trigger: 'change' }],
   target_id: [{ required: true, message: '请选择具体人员', trigger: 'change' }],
-  service_category: [{ required: true, message: '请选择服务类型', trigger: 'change' }],
-  service_duration: [{ required: true, message: '请选择服务时长', trigger: 'change' }],
-  activity_id: [{ required: true, message: '请选择活动类型', trigger: 'change' }],
-  duration_hours: [{ required: true, message: '请输入参与时长', trigger: 'blur' }],
+  service_rule_id: [{ required: true, message: '请选择服务类型', trigger: 'change' }],
+  duration_hours: [{ required: true, message: '请输入服务时长', trigger: 'blur' }],
   image_url: [{ required: true, message: '请上传服务照片', trigger: 'change' }]
 }
 
@@ -222,32 +181,18 @@ const uploadHeaders = computed(() => ({
   Authorization: `Bearer ${userStore.token}`
 }))
 
-// 可选院点列表（所有人都可以选择任意院）
 const availableInstitutions = computed(() => {
   return institutionList.value
 })
 
-const isFixedService = computed(() => {
-  return form.service_category && form.service_category !== '文娱活动'
+const totalPoints = computed(() => {
+  if (!selectedRule.value || !form.duration_hours) return 0
+  return Math.round(form.duration_hours * selectedRule.value.points_per_hour)
 })
 
-const isActivityService = computed(() => {
-  return form.service_category === '文娱活动'
-})
-
-const calculatedPoints = computed(() => {
-  if (!form.service_duration) return 0
-  return form.service_duration === '<2小时' ? 1 : 2
-})
-
-const activityPoints = computed(() => {
-  if (!selectedActivity.value || !form.duration_hours) return 0
-  return Math.round(form.duration_hours * selectedActivity.value.points_per_hour)
-})
-
-const activityPointsText = computed(() => {
-  if (!selectedActivity.value || !form.duration_hours) return ''
-  return `${form.duration_hours}小时 × ${selectedActivity.value.points_per_hour}分/小时 = ${activityPoints.value}分`
+const pointsText = computed(() => {
+  if (!selectedRule.value || !form.duration_hours) return ''
+  return `${form.duration_hours}小时 × ${selectedRule.value.points_per_hour}分/小时 = ${totalPoints.value}分`
 })
 
 // 级联：院点改变
@@ -269,19 +214,11 @@ const handleTypeChange = () => {
 }
 
 // 服务类型改变
-const handleServiceChange = () => {
-  form.service_duration = ''
-  form.activity_id = null
-  form.duration_hours = null
-  selectedActivity.value = null
+const handleServiceChange = (val) => {
+  selectedRule.value = serviceRuleList.value.find(r => r.id === val)
 }
 
-// 活动类型改变
-const handleActivityChange = (val) => {
-  selectedActivity.value = activityList.value.find(a => a.id === val)
-}
-
-const calculateActivityPoints = () => {
+const calculatePoints = () => {
   // 计算逻辑在computed中
 }
 
@@ -291,6 +228,15 @@ const fetchInstitutions = async () => {
     institutionList.value = res.data
   } catch (error) {
     console.error('获取院点失败:', error)
+  }
+}
+
+const fetchServiceRules = async () => {
+  try {
+    const res = await getServiceRuleList()
+    serviceRuleList.value = res.data
+  } catch (error) {
+    console.error('获取服务规则失败:', error)
   }
 }
 
@@ -306,15 +252,6 @@ const fetchPersons = async () => {
     personList.value = res.data
   } finally {
     personLoading.value = false
-  }
-}
-
-const fetchActivities = async () => {
-  try {
-    const res = await getActivityList({ status: 1 })
-    activityList.value = res.data
-  } catch (error) {
-    console.error('获取活动列表失败:', error)
   }
 }
 
@@ -349,17 +286,7 @@ const handleSubmit = async () => {
     if (valid) {
       submitLoading.value = true
       try {
-        const submitData = { ...form }
-        
-        // 根据服务类型处理数据
-        if (isActivityService.value) {
-          submitData.service_duration = null
-        } else {
-          submitData.activity_id = null
-          submitData.duration_hours = null
-        }
-        
-        const res = await grantPoints(submitData)
+        const res = await grantPoints(form)
         ElMessage.success(`发放成功，${res.data.target_name}当前积分余额为${res.data.current_balance}分`)
         handleReset()
       } finally {
@@ -374,14 +301,12 @@ const handleReset = () => {
   form.institution_id = userStore.isDirector ? userStore.userInstitution?.id : ''
   form.target_type = ''
   form.target_id = ''
-  form.service_category = ''
-  form.service_duration = ''
-  form.activity_id = null
+  form.service_rule_id = null
   form.duration_hours = null
   form.description = ''
   form.image_url = ''
   personList.value = []
-  selectedActivity.value = null
+  selectedRule.value = null
 }
 
 onMounted(() => {
@@ -390,7 +315,7 @@ onMounted(() => {
   } else {
     institutionList.value = [userStore.userInstitution]
   }
-  fetchActivities()
+  fetchServiceRules()
 })
 </script>
 

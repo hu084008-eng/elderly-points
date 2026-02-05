@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
 
   // Getters
   const isLoggedIn = computed(() => !!token.value)
-  const isAdmin = computed(() => userInfo.value?.role === 'admin')
+  const isAdmin = computed(() => userInfo.value?.role === 'super_admin' || userInfo.value?.role === 'admin')
   const isDirector = computed(() => userInfo.value?.role === 'director')
   const userInstitution = computed(() => userInfo.value?.institution)
 

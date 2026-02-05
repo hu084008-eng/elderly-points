@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sequelize, Helper, Elderly, Activity, PointsTransaction } = require('../models');
-const { calculateFixedPoints, calculateActivityPoints } = require('../utils/calculator');
+const { sequelize, Helper, Elderly, Activity, PointsTransaction, ServiceRule } = require('../models');
 const auditLog = require('../middleware/auditLog');
 
 // 获取人员列表（用于级联选择）
@@ -57,16 +56,14 @@ router.post('/', auditLog('发放积分', '积分', { description: '发放积分
       institution_id,
       target_type,
       target_id,
-      service_category,
-      service_duration,
-      activity_id,
+      service_rule_id,
       duration_hours,
       description,
       image_url
     } = req.body;
     
     // 验证必填字段
-    if (!institution_id || !target_type || !target_id || !service_category) {
+    if (!institution_id || !target_type || !target_id || !service_rule_id || !duration_hours) {
       await transaction.rollback();
       return res.status(400).json({ code: 400, message: '缺少必填字段' });
     }
@@ -77,41 +74,15 @@ router.post('/', auditLog('发放积分', '积分', { description: '发放积分
       return res.status(400).json({ code: 400, message: '请上传服务照片' });
     }
     
-    // 所有人都可以为任意院点发放积分
-    
-    // 计算积分
-    let amount = 0;
-    let calculationType = 'fixed';
-    let activityName = null;
-    let pointsPerHour = null;
-    let finalServiceDuration = service_duration;
-    
-    if (service_category === '文娱活动') {
-      // 文娱活动：动态计算
-      if (!activity_id || !duration_hours) {
-        await transaction.rollback();
-        return res.status(400).json({ code: 400, message: '文娱活动需要选择活动类型和填写时长' });
-      }
-      
-      const activity = await Activity.findByPk(activity_id);
-      if (!activity || activity.status !== 1) {
-        await transaction.rollback();
-        return res.status(400).json({ code: 400, message: '活动类型不存在或已停用' });
-      }
-      
-      calculationType = 'dynamic';
-      amount = calculateActivityPoints(duration_hours, activity.points_per_hour);
-      activityName = activity.name;
-      pointsPerHour = activity.points_per_hour;
-      finalServiceDuration = `${duration_hours}小时`;
-    } else {
-      // 固定分值服务
-      if (!service_duration) {
-        await transaction.rollback();
-        return res.status(400).json({ code: 400, message: '请选择服务时长' });
-      }
-      amount = calculateFixedPoints(service_duration);
+    // 获取服务规则
+    const serviceRule = await ServiceRule.findByPk(service_rule_id);
+    if (!serviceRule || serviceRule.status !== 1) {
+      await transaction.rollback();
+      return res.status(400).json({ code: 400, message: '服务类型不存在或已停用' });
     }
+    
+    // 计算积分：时长 × 每小时积分
+    const amount = Math.round(duration_hours * serviceRule.points_per_hour);
     
     // 查找目标人员
     let targetPerson;
@@ -146,12 +117,10 @@ router.post('/', auditLog('发放积分', '积分', { description: '发放积分
       target_name: targetPerson.name,
       type: 'earn',
       amount,
-      service_category,
-      service_duration: finalServiceDuration,
-      calculation_type: calculationType,
-      activity_id: activity_id || null,
-      activity_name: activityName,
-      points_per_hour: pointsPerHour,
+      service_category: serviceRule.name,
+      service_duration: `${duration_hours}小时`,
+      calculation_type: 'dynamic',
+      points_per_hour: serviceRule.points_per_hour,
       description,
       image_url,
       operator_id: req.user.id,

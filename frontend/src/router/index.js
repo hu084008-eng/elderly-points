@@ -22,6 +22,12 @@ const routes = [
       },
       // 管理员专属路由
       {
+        path: 'service-rules',
+        name: 'ServiceRules',
+        component: () => import('@/views/service-rules/List.vue'),
+        meta: { title: '积分规则管理', adminOnly: true }
+      },
+      {
         path: 'activities',
         name: 'Activities',
         component: () => import('@/views/activities/List.vue'),

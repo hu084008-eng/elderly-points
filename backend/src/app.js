@@ -17,6 +17,7 @@ const recordRoutes = require('./routes/records');
 const uploadRoutes = require('./routes/upload');
 const userRoutes = require('./routes/users');
 const logRoutes = require('./routes/logs');
+const serviceRuleRoutes = require('./routes/service-rules');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -52,6 +53,7 @@ app.use('/api/records', authMiddleware, recordRoutes);
 app.use('/api/upload', authMiddleware, uploadRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/logs', authMiddleware, logRoutes);
+app.use('/api/service-rules', authMiddleware, serviceRuleRoutes);
 
 // 错误处理中间件
 app.use((err, req, res, next) => {

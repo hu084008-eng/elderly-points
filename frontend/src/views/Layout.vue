@@ -18,6 +18,10 @@
         
         <!-- 管理员菜单 -->
         <template v-if="userStore.isAdmin">
+          <el-menu-item index="/service-rules">
+            <el-icon><Setting /></el-icon>
+            <span>积分规则管理</span>
+          </el-menu-item>
           <el-menu-item index="/activities">
             <el-icon><Calendar /></el-icon>
             <span>文娱活动管理</span>
@@ -44,8 +48,8 @@
           </el-menu-item>
         </template>
         
-        <!-- 共用菜单 -->
-        <el-menu-item index="/grant">
+        <!-- 共用菜单（仅院长可见） -->
+        <el-menu-item v-if="!userStore.isAdmin" index="/grant">
           <el-icon><Coin /></el-icon>
           <span>积分发放</span>
         </el-menu-item>

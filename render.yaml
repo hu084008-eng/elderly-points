@@ -6,7 +6,7 @@ services:
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://elderly-backend.onrender.com
+        value: https://elderly-backend-2-io1k.onrender.com
 
   - type: web
     name: elderly-backend

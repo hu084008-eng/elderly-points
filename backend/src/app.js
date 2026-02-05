@@ -74,8 +74,14 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('数据库连接成功');
     
-    // 同步模型（生产环境建议使用迁移）
-    await sequelize.sync({ alter: true });
+    // 同步模型（首次部署使用 force: true，后续使用 alter: true）
+    const syncOptions = process.env.DB_FORCE_SYNC === 'true' ? { force: true } : { alter: true };
+    await sequelize.sync(syncOptions);
+    console.log('数据库模型同步完成');
+    
+    // 初始化默认数据
+    const initData = require('./init-data');
+    await initData();
     
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`服务器运行在端口 ${PORT}`);

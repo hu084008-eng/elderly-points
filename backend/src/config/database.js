@@ -1,17 +1,14 @@
 const { Sequelize } = require('sequelize');
 
-// 支持 MySQL 和 PostgreSQL
-const dialect = process.env.DB_DIALECT || 'mysql';
-const defaultPort = dialect === 'postgres' ? 5432 : 3306;
+let sequelize;
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME || 'elderly_care',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || 'root123456',
-  {
-    host: process.env.DB_HOST || 'mysql',
-    port: parseInt(process.env.DB_PORT) || defaultPort,
-    dialect: dialect,
+// 优先使用 DATABASE_URL (Render 等云平台提供)
+if (process.env.DATABASE_URL) {
+  const isInternalHost = process.env.DATABASE_URL.includes('.internal') || 
+                         !process.env.DATABASE_URL.includes('.render.com');
+  
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
     logging: false,
     pool: {
       max: 5,
@@ -19,15 +16,47 @@ const sequelize = new Sequelize(
       acquire: 30000,
       idle: 10000
     },
-    dialectOptions: dialect === 'postgres' ? {
-      ssl: process.env.DB_SSL === 'true' ? {
+    dialectOptions: isInternalHost ? {
+      // 内部网络不需要 SSL
+      ssl: false
+    } : {
+      // 外部连接需要 SSL
+      ssl: {
         require: true,
         rejectUnauthorized: false
-      } : false
-    } : {
-      charset: 'utf8mb4'
+      }
     }
-  }
-);
+  });
+} else {
+  // 本地开发使用分开的配置
+  const dialect = process.env.DB_DIALECT || 'mysql';
+  const defaultPort = dialect === 'postgres' ? 5432 : 3306;
+
+  sequelize = new Sequelize(
+    process.env.DB_NAME || 'elderly_care',
+    process.env.DB_USER || 'root',
+    process.env.DB_PASSWORD || 'root123456',
+    {
+      host: process.env.DB_HOST || 'mysql',
+      port: parseInt(process.env.DB_PORT) || defaultPort,
+      dialect: dialect,
+      logging: false,
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      },
+      dialectOptions: dialect === 'postgres' ? {
+        ssl: process.env.DB_SSL === 'true' ? {
+          require: true,
+          rejectUnauthorized: false
+        } : false
+      } : {
+        charset: 'utf8mb4'
+      }
+    }
+  );
+}
 
 module.exports = sequelize;

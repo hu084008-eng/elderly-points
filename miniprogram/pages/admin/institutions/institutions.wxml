@@ -1,0 +1,91 @@
+<view class="container">
+  <view class="header">
+    <text class="title">院点管理</text>
+    <text class="subtitle">管理各院点及院长账号</text>
+  </view>
+
+  <view class="institution-list">
+    <view class="institution-card" wx:for="{{institutions}}" wx:key="id">
+      <view class="card-header">
+        <view class="institution-info">
+          <text class="name">{{item.name}}</text>
+          <text class="address">{{item.address}}</text>
+        </view>
+        <view class="status-badge {{item.status === 1 ? 'active' : 'inactive'}}">
+          {{item.status === 1 ? '启用' : '停用'}}
+        </view>
+      </view>
+
+      <view class="card-body">
+        <view class="info-row">
+          <text class="label">联系人：</text>
+          <text class="value">{{item.contact_person || '未设置'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">联系电话：</text>
+          <text class="value">{{item.contact_phone || '未设置'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">院长账号：</text>
+          <text class="value">{{item.director?.username || '未设置'}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <button class="btn-edit" bindtap="editInstitution" data-id="{{item.id}}">编辑</button>
+        <button class="btn-password" bindtap="resetPassword" data-id="{{item.id}}">重置密码</button>
+        <button class="btn-delete" bindtap="deleteInstitution" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="showAddModal">
+    <text>+ 新增院点</text>
+  </view>
+
+  <!-- 新增/编辑弹窗 -->
+  <view class="modal" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="hideModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">{{isEdit ? '编辑院点' : '新增院点'}}</text>
+      </view>
+      
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">院点名称</text>
+          <input placeholder="如：李河院" value="{{form.name}}" bindinput="onNameInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">地址</text>
+          <input placeholder="院点地址" value="{{form.address}}" bindinput="onAddressInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">联系人</text>
+          <input placeholder="联系人姓名" value="{{form.contact_person}}" bindinput="onContactInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">联系电话</text>
+          <input type="number" placeholder="联系电话" value="{{form.contact_phone}}" bindinput="onPhoneInput"/>
+        </view>
+        
+        <block wx:if="{{!isEdit}}">
+          <view class="divider">院长账号设置</view>
+          <view class="form-item">
+            <text class="form-label">院长账号</text>
+            <input placeholder="登录账号" value="{{form.director_username}}" bindinput="onUsernameInput"/>
+          </view>
+          <view class="form-item">
+            <text class="form-label">初始密码</text>
+            <input password placeholder="初始密码" value="{{form.director_password}}" bindinput="onPasswordInput"/>
+          </view>
+        </block>
+      </view>
+
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="hideModal">取消</button>
+        <button class="btn-confirm" bindtap="saveInstitution">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

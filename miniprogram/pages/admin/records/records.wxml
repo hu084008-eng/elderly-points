@@ -1,0 +1,62 @@
+<view class="container">
+  <view class="header">
+    <text class="title">流水查询</text>
+    <text class="subtitle">查看所有积分发放和兑换记录</text>
+  </view>
+
+  <view class="filter-bar">
+    <picker mode="selector" range="{{types}}" bindchange="onTypeChange">
+      <view class="filter-item">
+        <text>{{selectedType || '全部类型'}}</text>
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+    <picker mode="date" bindchange="onDateChange">
+      <view class="filter-item">
+        <text>{{selectedDate || '选择日期'}}</text>
+        <text class="arrow">▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="records-list">
+    <view class="record-card {{item.type}}" wx:for="{{records}}" wx:key="id">
+      <view class="record-header">
+        <view class="type-badge {{item.type}}">
+          {{item.type === 'earn' ? '发放' : '兑换'}}
+        </view>
+        <text class="time">{{item.created_at}}</text>
+      </view>
+      
+      <view class="record-body">
+        <view class="info-row">
+          <text class="label">人员：</text>
+          <text class="value">{{item.target_name}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.type === 'earn'}}">
+          <text class="label">服务：</text>
+          <text class="value">{{item.service_category}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.description}}">
+          <text class="label">备注：</text>
+          <text class="value">{{item.description}}</text>
+        </view>
+      </view>
+
+      <view class="record-footer">
+        <text class="points {{item.type}}">
+          {{item.type === 'earn' ? '+' : '-'}}{{item.amount}}
+        </text>
+        <text class="operator">操作员：{{item.operator_name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="load-more" wx:if="{{hasMore}}">
+    <text bindtap="loadMore">加载更多</text>
+  </view>
+
+  <view class="empty" wx:if="{{records.length === 0}}">
+    <text>暂无记录</text>
+  </view>
+</view>

@@ -1,0 +1,72 @@
+<view class="container">
+  <view class="header">
+    <text class="title">积分规则管理</text>
+    <text class="subtitle">设置各类服务的每小时积分标准</text>
+  </view>
+
+  <view class="rules-list">
+    <view class="rule-card" wx:for="{{rules}}" wx:key="id">
+      <view class="rule-header">
+        <view class="rule-info">
+          <text class="rule-name">{{item.name}}</text>
+          <text class="rule-code">{{item.code}}</text>
+        </view>
+        <switch 
+          checked="{{item.status === 1}}" 
+          bindchange="toggleStatus" 
+          data-id="{{item.id}}"
+        />
+      </view>
+      
+      <view class="rule-body">
+        <view class="points-setting">
+          <text class="label">每小时积分</text>
+          <view class="points-control">
+            <button class="btn-minus" bindtap="changePoints" data-id="{{item.id}}" data-delta="-1">-</button>
+            <text class="points-value">{{item.points_per_hour}}分</text>
+            <button class="btn-plus" bindtap="changePoints" data-id="{{item.id}}" data-delta="1">+</button>
+          </view>
+        </view>
+        <text class="rule-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="showAddModal">
+    <text>+ 新增服务类型</text>
+  </view>
+
+  <!-- 新增弹窗 -->
+  <view class="modal" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="hideModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">新增服务类型</text>
+      </view>
+      
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">规则编码</text>
+          <input placeholder="如：dao_yuan" value="{{form.code}}" bindinput="onCodeInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">服务名称</text>
+          <input placeholder="如：到院互助服务" value="{{form.name}}" bindinput="onNameInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">每小时积分</text>
+          <input type="number" placeholder="1" value="{{form.points_per_hour}}" bindinput="onPointsInput"/>
+        </view>
+        <view class="form-item">
+          <text class="form-label">说明</text>
+          <input placeholder="服务说明" value="{{form.description}}" bindinput="onDescInput"/>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="hideModal">取消</button>
+        <button class="btn-confirm" bindtap="addRule">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

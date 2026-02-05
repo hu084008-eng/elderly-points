@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="header">
+    <text class="title">护工管理</text>
+    <text class="subtitle">本院护工信息及积分情况</text>
+  </view>
+
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-num">{{totalCount}}</text>
+      <text class="stat-label">总人数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{totalPoints}}</text>
+      <text class="stat-label">总积分</text>
+    </view>
+  </view>
+
+  <view class="search-bar">
+    <input placeholder="搜索护工姓名" value="{{keyword}}" bindinput="onSearch"/>
+  </view>
+
+  <view class="helper-list">
+    <view class="helper-card" wx:for="{{filteredHelpers}}" wx:key="id">
+      <view class="helper-info">
+        <view class="avatar">👨‍⚕️</view>
+        <view class="info">
+          <text class="name">{{item.name}}</text>
+          <text class="time">加入时间：{{item.created_at}}</text>
+        </view>
+      </view>
+      <view class="points-section">
+        <text class="points-label">当前积分</text>
+        <text class="points-value">{{item.total_points}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{filteredHelpers.length === 0}}">
+    <text>暂无护工数据</text>
+  </view>
+</view>

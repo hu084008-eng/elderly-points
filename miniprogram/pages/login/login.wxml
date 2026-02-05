@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="logo">
+    <text class="title">养老积分超市</text>
+    <text class="subtitle">农村互助养老管理系统</text>
+  </view>
+
+  <view class="form">
+    <view class="input-group">
+      <text class="label">账号</text>
+      <input 
+        type="text" 
+        placeholder="请输入账号" 
+        value="{{username}}"
+        bindinput="onUsernameInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <text class="label">密码</text>
+      <input 
+        type="password" 
+        placeholder="请输入密码" 
+        value="{{password}}"
+        bindinput="onPasswordInput"
+      />
+    </view>
+
+    <button class="login-btn" bindtap="onLogin" loading="{{loading}}">
+      登录
+    </button>
+
+    <view class="tips">
+      <text class="tip-title">默认账号：</text>
+      <text class="tip-item">管理员：admin / admin123</text>
+      <text class="tip-item">李河院长：lihe_yz / 123456</text>
+      <text class="tip-item">武陵院长：wuling_yz / 123456</text>
+      <text class="tip-item">甘宁院长：ganning_yz / 123456</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,72 @@
+<view class="container">
+  <view class="header">
+    <text class="title">积分发放</text>
+    <text class="subtitle">为护工或老人发放服务积分</text>
+  </view>
+
+  <view class="form-section">
+    <view class="form-item">
+      <text class="label">人员类型</text>
+      <picker mode="selector" range="{{personTypes}}" range-key="name" bindchange="onTypeChange">
+        <view class="picker {{selectedType ? '' : 'placeholder'}}">
+          {{selectedTypeName || '请选择人员类型'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="label">选择人员</text>
+      <picker mode="selector" range="{{persons}}" range-key="displayName" bindchange="onPersonChange" disabled="{{!selectedType}}">
+        <view class="picker {{selectedPerson ? '' : 'placeholder'}}">
+          {{selectedPersonName || '请选择具体人员'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item" wx:if="{{selectedPerson}}">
+      <text class="label">当前积分</text>
+      <text class="current-points">{{selectedPerson.total_points}}分</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">服务类型</text>
+      <picker mode="selector" range="{{rules}}" range-key="name" bindchange="onRuleChange">
+        <view class="picker {{selectedRule ? '' : 'placeholder'}}">
+          {{selectedRuleName || '请选择服务类型'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item" wx:if="{{selectedRule}}">
+      <text class="label">积分标准</text>
+      <text class="rule-points">{{selectedRule.points_per_hour}}分/小时</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">服务时长（小时）</text>
+      <slider min="0.5" max="8" step="0.5" value="{{duration}}" show-value bindchange="onDurationChange"/>
+    </view>
+
+    <view class="form-item" wx:if="{{selectedRule && duration}}">
+      <text class="label">本次发放</text>
+      <text class="grant-points">{{calculatePoints()}}分</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">服务照片</text>
+      <view class="upload-area" bindtap="chooseImage">
+        <image wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="aspectFit"/>
+        <text wx:else class="upload-text">+ 拍摄照片</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="label">备注（选填）</text>
+      <textarea placeholder="如：为张三理发" value="{{remark}}" bindinput="onRemarkInput"/>
+    </view>
+  </view>
+
+  <button class="submit-btn" bindtap="submitGrant" disabled="{{!canSubmit}}">
+    确认发放
+  </button>
+</view>

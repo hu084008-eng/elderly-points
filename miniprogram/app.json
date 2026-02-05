@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/admin/dashboard/dashboard",
+    "pages/admin/institutions/institutions",
+    "pages/admin/users/users",
+    "pages/admin/products/products",
+    "pages/admin/rules/rules",
+    "pages/admin/records/records",
+    "pages/director/dashboard/dashboard",
+    "pages/director/grant/grant",
+    "pages/director/exchange/exchange",
+    "pages/director/helpers/helpers",
+    "pages/director/elderly/elderly",
+    "pages/director/records/records"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "backgroundColor": "#f5f5f5",
+    "navigationBarTitleText": "养老积分超市"
+  },
+  "permission": {
+    "scope.camera": {
+      "desc": "用于拍摄服务照片"
+    }
+  },
+  "sitemapLocation": "sitemap.json"
+}

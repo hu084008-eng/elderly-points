@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="header">
+    <text class="title">{{institution.name}}</text>
+    <text class="subtitle">欢迎回来，{{userInfo.name}}院长</text>
+  </view>
+
+  <view class="stats">
+    <view class="stat-card">
+      <text class="stat-num">{{stats.helpers}}</text>
+      <text class="stat-label">护工人数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.elderly}}</text>
+      <text class="stat-label">老人人数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{stats.totalPoints}}</text>
+      <text class="stat-label">总积分</text>
+    </view>
+  </view>
+
+  <view class="menu-grid">
+    <view class="menu-item" bindtap="goToPage" data-url="/pages/director/grant/grant">
+      <view class="menu-icon" style="background: #e3f2fd;">
+        <text class="iconfont">💰</text>
+      </view>
+      <text class="menu-text">积分发放</text>
+    </view>
+
+    <view class="menu-item" bindtap="goToPage" data-url="/pages/director/exchange/exchange">
+      <view class="menu-icon" style="background: #f3e5f5;">
+        <text class="iconfont">🛒</text>
+      </view>
+      <text class="menu-text">积分兑换</text>
+    </view>
+
+    <view class="menu-item" bindtap="goToPage" data-url="/pages/director/helpers/helpers">
+      <view class="menu-icon" style="background: #e8f5e9;">
+        <text class="iconfont">👨‍⚕️</text>
+      </view>
+      <text class="menu-text">护工管理</text>
+    </view>
+
+    <view class="menu-item" bindtap="goToPage" data-url="/pages/director/elderly/elderly">
+      <view class="menu-icon" style="background: #fff3e0;">
+        <text class="iconfont">👴</text>
+      </view>
+      <text class="menu-text">老人管理</text>
+    </view>
+
+    <view class="menu-item" bindtap="goToPage" data-url="/pages/director/records/records">
+      <view class="menu-icon" style="background: #fce4ec;">
+        <text class="iconfont">📋</text>
+      </view>
+      <text class="menu-text">流水查询</text>
+    </view>
+  </view>
+</view>

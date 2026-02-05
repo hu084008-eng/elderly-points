@@ -1,0 +1,27 @@
+<view class="container">
+  <view class="header">
+    <text class="title">院长账号管理</text>
+    <text class="subtitle">管理各院院长登录账号</text>
+  </view>
+
+  <view class="users-list">
+    <view class="user-card" wx:for="{{users}}" wx:key="id">
+      <view class="user-header">
+        <view class="user-info">
+          <text class="username">{{item.username}}</text>
+          <text class="name">{{item.name}}</text>
+        </view>
+        <view class="institution-tag">{{item.institution?.name || '未分配'}}</view>
+      </view>
+      
+      <view class="user-footer">
+        <button class="btn-reset" bindtap="resetPassword" data-id="{{item.id}}">重置密码</button>
+        <button class="btn-delete" bindtap="deleteUser" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="tips">
+    <text class="tip-text">提示：添加院长请前往"院点管理"页面</text>
+  </view>
+</view>

@@ -1,0 +1,85 @@
+<view class="container">
+  <view class="header">
+    <text class="title">积分兑换</text>
+    <text class="subtitle">选择人员和商品进行兑换</text>
+  </view>
+
+  <!-- 人员选择区 -->
+  <view class="section">
+    <view class="section-title">1. 选择人员</view>
+    
+    <view class="form-item">
+      <text class="label">人员类型</text>
+      <view class="radio-group">
+        <view class="radio {{selectedType === 'helper' ? 'active' : ''}}" bindtap="selectType" data-type="helper">护工</view>
+        <view class="radio {{selectedType === 'elderly' ? 'active' : ''}}" bindtap="selectType" data-type="elderly">老人</view>
+      </view>
+    </view>
+
+    <view class="form-item" wx:if="{{selectedType}}">
+      <text class="label">选择人员</text>
+      <picker mode="selector" range="{{persons}}" range-key="displayName" bindchange="onPersonChange">
+        <view class="picker {{selectedPerson ? '' : 'placeholder'}}">
+          {{selectedPerson ? selectedPerson.name + ' - 余额' + selectedPerson.total_points + '分' : '请选择人员'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="balance-display" wx:if="{{selectedPerson}}">
+      <text class="balance-label">当前可用积分</text>
+      <text class="balance-value">{{selectedPerson.total_points}}分</text>
+    </view>
+  </view>
+
+  <!-- 商品选择区 -->
+  <view class="section" wx:if="{{selectedPerson}}">
+    <view class="section-title">2. 选择商品</view>
+    
+    <view class="product-grid">
+      <view class="product-item {{item.selected ? 'selected' : ''}} {{item.stock_quantity === 0 ? 'out-of-stock' : ''}}" 
+            wx:for="{{products}}" 
+            wx:key="id"
+            bindtap="selectProduct"
+            data-id="{{item.id}}">
+        <view class="product-icon">🎁</view>
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-points">{{item.points_price}}分/{{item.unit}}</text>
+        <text class="product-stock">库存：{{item.stock_quantity}}</text>
+        <view class="quantity-control" wx:if="{{item.selected}}" catchtap="stopPropagation">
+          <text class="btn-minus" catchtap="changeQuantity" data-id="{{item.id}}" data-delta="-1">-</text>
+          <text class="quantity">{{cart[item.id] || 0}}</text>
+          <text class="btn-plus" catchtap="changeQuantity" data-id="{{item.id}}" data-delta="1">+</text>
+        </view>
+        <view class="out-of-stock-tag" wx:if="{{item.stock_quantity === 0}}">缺货</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 购物车汇总 -->
+  <view class="cart-summary" wx:if="{{totalPoints > 0}}">
+    <view class="summary-row">
+      <text class="label">已选商品：</text>
+      <text class="value">{{selectedCount}}种</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">总计积分：</text>
+      <text class="value total">{{totalPoints}}分</text>
+    </view>
+    <view class="summary-row" wx:if="{{selectedPerson}}">
+      <text class="label">兑换后余额：</text>
+      <text class="value {{selectedPerson.total_points - totalPoints < 0 ? 'insufficient' : ''}}">
+        {{selectedPerson.total_points - totalPoints}}分
+      </text>
+    </view>
+    <view class="warning" wx:if="{{selectedPerson && selectedPerson.total_points < totalPoints}}">
+      积分不足，无法兑换
+    </view>
+  </view>
+
+  <button class="submit-btn" 
+          bindtap="submitExchange" 
+          disabled="{{!canSubmit}}"
+          style="background: {{canSubmit ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#ccc'}}">
+    {{selectedPerson && selectedPerson.total_points < totalPoints ? '积分不足' : '确认兑换'}}
+  </button>
+</view>

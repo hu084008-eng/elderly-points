@@ -1,0 +1,91 @@
+.container {
+  padding: 20rpx;
+}
+
+.rules-list {
+  margin-bottom: 120rpx;
+}
+
+.rule-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.rule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.rule-info .rule-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.rule-info .rule-code {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.rule-body {
+  margin-bottom: 20rpx;
+}
+
+.points-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.points-setting .label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.points-control {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.points-control .btn-minus,
+.points-control .btn-plus {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  background: #667eea;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 32rpx;
+}
+
+.points-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #667eea;
+  min-width: 100rpx;
+  text-align: center;
+}
+
+.rule-desc {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.rule-footer {
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+}

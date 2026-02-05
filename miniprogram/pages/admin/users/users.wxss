@@ -1,0 +1,102 @@
+.container {
+  padding: 20rpx;
+}
+
+.institution-list {
+  margin-bottom: 120rpx;
+}
+
+.institution-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.institution-info .name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.institution-info .address {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+
+.status-badge.active {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.status-badge.inactive {
+  background: #ffebee;
+  color: #f44336;
+}
+
+.card-body {
+  padding: 20rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid #f0f0f0;
+  margin-bottom: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+
+.info-row .label {
+  font-size: 28rpx;
+  color: #666;
+  width: 160rpx;
+}
+
+.info-row .value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  gap: 16rpx;
+}
+
+.card-footer button {
+  flex: 1;
+  font-size: 26rpx;
+  padding: 12rpx 0;
+}
+
+.btn-edit {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.btn-password {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.btn-delete {
+  background: #ffebee;
+  color: #d32f2f;
+}

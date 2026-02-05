@@ -17,8 +17,14 @@ const Institution = sequelize.define('Institution', {
   director_id: {
     type: DataTypes.INTEGER
   },
+  contact_person: {
+    type: DataTypes.STRING(50)
+  },
+  contact_phone: {
+    type: DataTypes.STRING(20)
+  },
   status: {
-    type: DataTypes.TINYINT,
+    type: DataTypes.INTEGER,
     defaultValue: 1
   }
 }, {

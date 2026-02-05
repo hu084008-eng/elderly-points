@@ -27,9 +27,8 @@ const initData = async () => {
     const admin = await User.create({
       username: 'admin',
       password_hash: adminPassword,
-      real_name: '系统管理员',
-      role: 'super_admin',
-      status: 1
+      name: '系统管理员',
+      role: 'super_admin'
     });
     console.log('创建管理员:', admin.username);
 
@@ -38,10 +37,9 @@ const initData = async () => {
     const director = await User.create({
       username: 'director_lh',
       password_hash: directorPassword,
-      real_name: '李院长',
+      name: '李院长',
       role: 'director',
-      institution_id: institution.id,
-      status: 1
+      institution_id: institution.id
     });
     console.log('创建院长:', director.username);
 

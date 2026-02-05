@@ -16,7 +16,7 @@ const Activity = sequelize.define('Activity', {
     allowNull: false
   },
   status: {
-    type: DataTypes.TINYINT,
+    type: DataTypes.INTEGER,
     defaultValue: 1
   }
 }, {

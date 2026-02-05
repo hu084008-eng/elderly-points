@@ -27,7 +27,7 @@ const Product = sequelize.define('Product', {
     type: DataTypes.STRING(20)
   },
   status: {
-    type: DataTypes.TINYINT,
+    type: DataTypes.INTEGER,
     defaultValue: 1
   }
 }, {

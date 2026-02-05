@@ -26,7 +26,7 @@ const initData = async () => {
     const adminPassword = await bcrypt.hash('admin123', 10);
     const admin = await User.create({
       username: 'admin',
-      password: adminPassword,
+      password_hash: adminPassword,
       real_name: '系统管理员',
       role: 'super_admin',
       status: 1
@@ -37,7 +37,7 @@ const initData = async () => {
     const directorPassword = await bcrypt.hash('123456', 10);
     const director = await User.create({
       username: 'director_lh',
-      password: directorPassword,
+      password_hash: directorPassword,
       real_name: '李院长',
       role: 'director',
       institution_id: institution.id,

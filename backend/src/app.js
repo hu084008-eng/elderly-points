@@ -75,7 +75,7 @@ const startServer = async () => {
     console.log('数据库连接成功');
     
     // 同步模型（生产环境建议使用迁移）
-    // await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: true });
     
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`服务器运行在端口 ${PORT}`);
